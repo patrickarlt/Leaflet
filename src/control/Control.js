@@ -36,29 +36,28 @@ L.Control = L.Class.extend({
 		return this._container;
 	},
 
-	addTo: function (map) {
+	addTo: function (map, domNode) {
 		this._map = map;
 
-		var container = this._container = this.onAdd(map),
-		    pos = this.getPosition(),
-		    corner = map._controlCorners[pos];
+		var container = this._container = this.onAdd(map);
+		
+		this.node = (domNode)? domNode : map._controlCorners[this.getPosition()];
 
 		L.DomUtil.addClass(container, 'leaflet-control');
 
 		if (pos.indexOf('bottom') !== -1) {
-			corner.insertBefore(container, corner.firstChild);
+			this.node.insertBefore(container, node.firstChild);
 		} else {
-			corner.appendChild(container);
+			this.node.appendChild(container);
 		}
-
+		
 		return this;
 	},
 
 	removeFrom: function (map) {
-		var pos = this.getPosition(),
-		    corner = map._controlCorners[pos];
 
-		corner.removeChild(this._container);
+		this.node.removeChild(this._container);
+		this.node = null;
 		this._map = null;
 
 		if (this.onRemove) {
